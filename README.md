@@ -1,197 +1,168 @@
 # Blitzmate - Chess Puzzle Trainer
 
-A professional chess puzzle training application inspired by Lichess.org's puzzle trainer. Built with React, Vite, and Tailwind CSS.
+A professional, mobile-responsive chess puzzle trainer built with React and TypeScript. Train chess tactics with puzzles matched to your skill level.
 
-![Blitzmate Screenshot](https://img.shields.io/badge/Status-Ready-brightgreen)
+![Version](https://img.shields.io/badge/version-2.0.0-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-## Features
+## ✨ Features
 
-- 🎯 **Personalized Training** - Enter your Elo rating for customized puzzle difficulty
-- ♟️ **Interactive Chess Board** - Powered by Chessground (same library used by Lichess)
-- 📊 **Performance Tracking** - Track your streak, accuracy percentage, and total puzzles solved
-- ⌨️ **Keyboard Shortcuts** - Quick access with N (next), R (reset), H (hint)
-- 💾 **Persistent Stats** - Your progress is saved in localStorage
-- 🎨 **Beautiful Dark UI** - Lichess-inspired design with modern styling
-- 🚀 **Fast & Responsive** - Built with Vite for lightning-fast development and production builds
+- **Rating-Based Matching**: Puzzles matched within ±100 of your rating
+- **4 Board Themes**: Classic, Blue, Green, and Purple color schemes
+- **Mobile Optimized**: Fully responsive design, playable on any device
+- **Streak Tracking**: Track your progress and accuracy
+- **Keyboard Shortcuts**: H (Hint), R (Retry), N (Next)
+- **Smooth Animations**: Professional UI with smooth transitions
+- **Error Handling**: Built-in error boundary for stability
+- **Production Ready**: Optimized builds with code splitting
 
-## Tech Stack
+## 🚀 Tech Stack
 
-- **Frontend**: React 18
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS
-- **Chess Logic**: chess.js
-- **Chess Board**: Chessground
-- **API**: Lichess Open API
+- **React 18** - UI library
+- **TypeScript** - Type safety
+- **Vite** - Build tool
+- **TailwindCSS** - Styling
+- **chess.js** - Chess logic
+- **react-chessboard** - Board rendering
 
-## Installation
+## 📱 Mobile Support
 
-1. **Clone or download the repository**
+Blitzmate is fully optimized for mobile devices:
 
-2. **Install dependencies**
+- **Touch Controls**: Tap to select pieces, tap again to move
+- **Responsive Layout**: Adapts to any screen size
+- **Safe Area Support**: Works perfectly on devices with notches
+- **Touch Optimization**: Optimized touch targets (44px minimum)
+- **No Zoom**: Prevents accidental zooming during gameplay
+- **Gesture Support**: Drag and drop pieces with your finger
+
+### Mobile Tips
+
+1. Play in portrait mode for the best experience
+2. Use the mobile control bar at the bottom for quick actions
+3. Puzzle info appears above the board on mobile
+4. Theme selector adapts to smaller screens
+
+## 🎮 How to Play
+
+1. **Enter Your Rating**: Start by entering your current chess rating
+2. **Solve Puzzles**: Find the best move in each position
+3. **Get Feedback**: Instant feedback on your moves
+4. **Track Progress**: Monitor your streak and accuracy
+5. **Customize**: Choose from 4 different board themes
+
+## 🛠️ Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/AmanVilvas/BlitzMate-trainer.git
+
+# Navigate to project directory
+cd BlitzMate-trainer
+
+# Install dependencies
 npm install
-```
 
-3. **Start development server**
-
-```bash
+# Start development server
 npm run dev
-```
 
-The app will open automatically at `http://localhost:3000`
-
-4. **Build for production**
-
-```bash
+# Build for production
 npm run build
 ```
 
-5. **Preview production build**
+## 📦 Build Output
+
+Production build generates optimized chunks:
+- `index.html`: ~4 KB
+- `index.css`: ~26 KB (gzipped: 5.8 KB)
+- `react-vendor.js`: ~133 KB (gzipped: 42.75 KB)
+- `chess-vendor.js`: ~141 KB (gzipped: 40.56 KB)
+- `index.js`: ~42 KB (gzipped: 10.85 KB)
+
+Total gzipped size: ~100 KB
+
+## 🎯 Keyboard Shortcuts
+
+- `H` - Get a hint
+- `R` - Retry puzzle
+- `N` - Next puzzle
+- `ESC` - Close theme selector
+
+## 🎨 Board Themes
+
+1. **Classic** - Traditional brown and beige
+2. **Blue** - Cool blue tones
+3. **Green** - Lichess-inspired green
+4. **Purple** - Modern purple accent
+
+## 📊 Puzzle Database
+
+- 50+ curated puzzles
+- Rating range: 500-2300
+- Multiple themes: tactics, endgame, middlegame
+- Real Lichess puzzle data
+
+## 🔧 Development
 
 ```bash
+# Start dev server (auto-opens browser)
+npm run dev
+
+# Type checking
+npm run lint
+
+# Build for production
+npm run build
+
+# Preview production build
 npm run preview
 ```
 
-## Usage
+## 📱 Deployment
 
-### Getting Started
+### Vercel (Recommended)
+```bash
+# Install Vercel CLI
+npm i -g vercel
 
-1. Open the app in your browser
-2. Enter your chess Elo rating (0-3000)
-3. Click "Start Training Session"
-4. Solve puzzles by dragging and dropping pieces
-
-### Keyboard Shortcuts
-
-- **N** - Load next puzzle (after solving current one)
-- **R** - Reset current puzzle
-- **H** - Show hint for the next move
-
-### Scoring System
-
-- **Streak**: Number of consecutive puzzles solved correctly
-- **Solved**: Total number of puzzles you've completed
-- **Accuracy**: Percentage of puzzles solved on the first attempt
-
-## Project Structure
-
-```
-lichess/
-├── src/
-│   ├── App.jsx          # Main application component
-│   ├── main.jsx         # React entry point
-│   └── index.css        # Global styles with Tailwind
-├── index.html           # HTML template
-├── package.json         # Dependencies and scripts
-├── vite.config.js       # Vite configuration
-├── tailwind.config.js   # Tailwind CSS configuration
-├── postcss.config.js    # PostCSS configuration
-└── README.md           # This file
+# Deploy
+vercel
 ```
 
-## How It Works
+### Netlify
+```bash
+# Build
+npm run build
 
-### Puzzle Loading
-
-1. Fetches daily puzzle from Lichess API: `https://lichess.org/api/puzzle/daily`
-2. Parses the puzzle PGN (game notation) to set up the position
-3. Applies the first move from the solution (opponent's move)
-4. User must find the best continuation
-
-### Move Validation
-
-1. User drags a piece to make a move
-2. The move is validated against chess rules using `chess.js`
-3. If valid, it's checked against the puzzle solution
-4. Correct moves advance the puzzle; wrong moves reset the position
-5. After each correct user move, the opponent's response plays automatically
-
-### Stats Tracking
-
-All stats are stored in localStorage:
-- `blitzmate_elo`: Your chess rating
-- `blitzmate_streak`: Current solving streak
-- `blitzmate_total`: Total puzzles attempted
-- `blitzmate_solved`: Total puzzles solved correctly
-
-## API Reference
-
-This app uses the Lichess Open API:
-
-- **Endpoint**: `https://lichess.org/api/puzzle/daily`
-- **Method**: GET
-- **Response**: Daily puzzle with FEN, solution, rating, and game PGN
-- **Rate Limit**: No authentication required for daily puzzle
-
-## Customization
-
-### Colors
-
-Edit the `COLORS` object in `src/App.jsx` to customize the color scheme:
-
-```javascript
-const COLORS = {
-  bg: 'bg-[#161512]',      // Background
-  card: 'bg-[#262421]',    // Card backgrounds
-  sidebar: 'bg-[#1e1e1e]', // Sidebar background
-  // ... more colors
-};
+# Drag and drop 'dist' folder to Netlify
 ```
 
-### Board Theme
+### GitHub Pages
+```bash
+# Build
+npm run build
 
-The board uses Chessground's brown theme. To change it, modify the CSS link in `src/App.jsx`:
-
-```javascript
-// Change from brown to blue
-theme.href = 'https://cdn.jsdelivr.net/npm/chessground@9.1.1/assets/chessground.blue.css';
+# Deploy dist folder to gh-pages branch
 ```
 
-Available themes: `brown`, `blue`, `canvas`, `wood`, `wood2`, `wood3`, `maple`
+## 🤝 Contributing
 
-## Known Issues & Limitations
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-1. **API Limitation**: Currently uses the daily puzzle endpoint. For more variety, you could implement:
-   - Random puzzle selection
-   - Elo-based puzzle filtering
-   - Backend proxy to access more API endpoints
+## 📄 License
 
-2. **CORS**: Direct API calls work for the daily puzzle endpoint. For other endpoints, you may need a backend proxy.
+MIT License - feel free to use this project for learning or building your own chess trainer.
 
-3. **Mobile**: Touch controls work, but the UI is optimized for desktop screens.
+## 🙏 Acknowledgments
 
-## Future Enhancements
+- Puzzle data from [Lichess](https://lichess.org)
+- Chess piece images from standard chess fonts
+- Inspired by Lichess puzzle trainer
 
-- [ ] Backend proxy for more puzzle variety
-- [ ] User authentication and cloud storage
-- [ ] Puzzle history and replay
-- [ ] Leaderboard and social features
-- [ ] Timer for each puzzle
-- [ ] Puzzle themes (tactics, endgames, etc.)
-- [ ] Analysis board after solving
-- [ ] Dark/light theme toggle
+## 📧 Contact
 
-## Contributing
-
-Feel free to fork this project and submit pull requests for any improvements!
-
-## License
-
-This project is open source and available under the MIT License.
-
-## Acknowledgments
-
-- **Lichess.org** - For the amazing open API and inspiration
-- **Chessground** - For the excellent chess board component
-- **chess.js** - For chess move validation and game logic
-
-## Support
-
-If you encounter any issues or have questions, please open an issue on the GitHub repository.
+For questions or suggestions, please open an issue on GitHub.
 
 ---
 
-**Built with ♟️ by aspiring chess developers**
-
-Inspired by Lichess.org • Powered by Lichess API
+Built with ♟️ by [AmanVilvas](https://github.com/AmanVilvas)

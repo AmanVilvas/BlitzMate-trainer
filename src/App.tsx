@@ -274,41 +274,41 @@ const App: React.FC = () => {
 
   // Main puzzle trainer UI
   return (
-    <div className="min-h-screen bg-[#161512] text-[#bababa] flex flex-col">
+    <div className="min-h-screen bg-[#161512] text-[#bababa] flex flex-col pb-safe">
       {/* Header */}
-      <header className="h-14 bg-[#262421] border-b border-[#3a3835] flex items-center px-4 justify-between shadow-md">
-        <div className="flex items-center gap-6">
+      <header className="h-12 sm:h-14 bg-[#262421] border-b border-[#3a3835] flex items-center px-3 sm:px-4 justify-between shadow-md flex-shrink-0">
+        <div className="flex items-center gap-3 sm:gap-6">
           <div
-            className="flex items-center gap-2.5 cursor-pointer group"
+            className="flex items-center gap-2 cursor-pointer group"
             onClick={() => setIsStarted(false)}
           >
-            <div className="w-9 h-9 bg-gradient-to-br from-[#D4A024] to-[#b8891e] rounded-lg flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 24 24" className="w-5 h-5 text-white fill-current">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-br from-[#D4A024] to-[#b8891e] rounded-lg flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+              <svg viewBox="0 0 24 24" className="w-4 h-4 sm:w-5 sm:h-5 text-white fill-current">
                 <path d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5M19 19C19 19.6 18.6 20 18 20H6C5.4 20 5 19.6 5 19V18H19V19Z" />
               </svg>
             </div>
-            <span className="text-white font-bold text-xl tracking-tight">blitzmate</span>
+            <span className="text-white font-bold text-lg sm:text-xl tracking-tight">blitzmate</span>
           </div>
           <nav className="hidden md:flex gap-4 text-sm text-gray-400">
             <span className="text-white font-medium px-3 py-1 bg-[#3a3835] rounded-full text-xs uppercase tracking-wide">Puzzles</span>
           </nav>
         </div>
-        <div className="flex items-center gap-5 text-sm">
-          <div className="flex items-center gap-2 bg-[#1a1816] px-3 py-1.5 rounded-lg">
-            <span className="text-gray-500 text-xs uppercase">Rating</span>
+        <div className="flex items-center gap-2 sm:gap-5 text-xs sm:text-sm">
+          <div className="flex items-center gap-1.5 sm:gap-2 bg-[#1a1816] px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg">
+            <span className="text-gray-500 text-[10px] sm:text-xs uppercase hidden sm:inline">Rating</span>
             <span className="text-white font-bold">{userRating}</span>
           </div>
-          <div className="flex items-center gap-2 bg-[#1a1816] px-3 py-1.5 rounded-lg">
-            <span className="text-gray-500 text-xs uppercase">Streak</span>
+          <div className="flex items-center gap-1.5 sm:gap-2 bg-[#1a1816] px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg">
+            <span className="text-gray-500 text-[10px] sm:text-xs uppercase hidden sm:inline">Streak</span>
             <span className="text-[#629924] font-bold">{streak}</span>
           </div>
         </div>
       </header>
 
       {/* Main content */}
-      <main className="flex-1 flex justify-center items-start p-4 gap-5">
-        {/* Left sidebar - Puzzle info */}
-        <aside className="w-[240px] hidden lg:flex flex-col gap-4">
+      <main className="flex-1 flex flex-col lg:flex-row justify-center items-start p-2 sm:p-4 gap-3 sm:gap-5 overflow-y-auto">
+        {/* Left sidebar - Puzzle info - Desktop only */}
+        <aside className="w-[240px] hidden lg:flex flex-col gap-4 flex-shrink-0">
           {/* Puzzle info card */}
           <div className="bg-[#262421] rounded-xl p-5 border border-[#3a3835] shadow-lg">
             <div className="flex items-center gap-2.5 mb-4">
@@ -364,8 +364,30 @@ const App: React.FC = () => {
         </aside>
 
         {/* Center - Board */}
-        <section className="flex flex-col items-center">
-          <div className="animate-scaleIn">
+        <section className="flex flex-col items-center w-full max-w-[560px] lg:max-w-none flex-shrink-0">
+          {/* Mobile puzzle info - Above board */}
+          <div className="lg:hidden w-full mb-3 bg-[#262421] rounded-xl p-3 border border-[#3a3835] shadow-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 bg-[#D4A024]/20 rounded flex items-center justify-center">
+                  <svg className="w-3 h-3 text-[#D4A024]" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                  </svg>
+                </div>
+                <span className="text-xs font-bold text-white">
+                  #{puzzleState.puzzle?.id?.slice(0, 5) || '---'}
+                </span>
+              </div>
+              <span className="text-[#D4A024] font-bold text-sm flex items-center gap-1">
+                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                </svg>
+                {puzzleState.puzzle?.rating || '?'}
+              </span>
+            </div>
+          </div>
+
+          <div className="w-full">
             <Board
               fen={engineRef.current?.getFen() || 'start'}
               orientation={puzzleState.userColor}
@@ -380,37 +402,38 @@ const App: React.FC = () => {
           </div>
           
           {/* Theme selector button */}
-          <div className="relative mt-4" data-theme-selector>
+          <div className="relative mt-3 sm:mt-4" data-theme-selector>
             <button
               onClick={() => setShowThemeSelector(!showThemeSelector)}
-              className="flex items-center gap-2 bg-[#262421] hover:bg-[#333] px-4 py-2.5 rounded-xl text-sm text-gray-300 transition-all border border-[#3a3835] hover:border-[#4a4845] shadow-md"
+              className="flex items-center gap-2 bg-[#262421] hover:bg-[#333] px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm text-gray-300 transition-all border border-[#3a3835] hover:border-[#4a4845] shadow-md"
             >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <svg className="w-3 h-3 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
               </svg>
-              <span className="font-medium">Board Theme</span>
+              <span className="font-medium hidden sm:inline">Board Theme</span>
+              <span className="font-medium sm:hidden">Theme</span>
               <span 
-                className="w-5 h-5 rounded-md border border-gray-600 shadow-inner" 
+                className="w-4 h-4 sm:w-5 sm:h-5 rounded-md border border-gray-600 shadow-inner" 
                 style={{ backgroundColor: boardTheme.darkSquare }}
               />
             </button>
             
             {/* Theme dropdown */}
             {showThemeSelector && (
-              <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-[#262421] border border-[#3a3835] rounded-xl shadow-2xl p-4 z-20 animate-scaleIn">
-                <div className="text-xs text-gray-500 mb-3 uppercase font-bold text-center tracking-wide">Select Theme</div>
-                <div className="flex gap-3">
+              <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-[#262421] border border-[#3a3835] rounded-xl shadow-2xl p-3 sm:p-4 z-20 animate-scaleIn">
+                <div className="text-xs text-gray-500 mb-2 sm:mb-3 uppercase font-bold text-center tracking-wide">Select Theme</div>
+                <div className="flex gap-2 sm:gap-3">
                   {BOARD_THEMES.map((theme) => (
                     <button
                       key={theme.id}
                       onClick={() => handleThemeChange(theme)}
-                      className={`flex flex-col items-center p-2.5 rounded-xl transition-all ${
+                      className={`flex flex-col items-center p-2 sm:p-2.5 rounded-xl transition-all ${
                         boardTheme.id === theme.id 
                           ? 'bg-[#3a3835] ring-2 ring-[#D4A024] shadow-lg' 
                           : 'hover:bg-[#333]'
                       }`}
                     >
-                      <div className="w-14 h-14 grid grid-cols-4 rounded-lg overflow-hidden mb-2 border border-gray-700 shadow-md">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 grid grid-cols-4 rounded-lg overflow-hidden mb-1 sm:mb-2 border border-gray-700 shadow-md">
                         {[...Array(16)].map((_, i) => {
                           const row = Math.floor(i / 4);
                           const col = i % 4;
@@ -425,7 +448,7 @@ const App: React.FC = () => {
                           );
                         })}
                       </div>
-                      <span className="text-xs text-gray-300 font-medium">{theme.name}</span>
+                      <span className="text-[10px] sm:text-xs text-gray-300 font-medium">{theme.name}</span>
                     </button>
                   ))}
                 </div>
@@ -434,8 +457,8 @@ const App: React.FC = () => {
           </div>
         </section>
 
-        {/* Right sidebar - Controls */}
-        <aside className="w-[280px] hidden lg:flex flex-col gap-4">
+        {/* Right sidebar - Controls - Desktop only */}
+        <aside className="w-[280px] hidden lg:flex flex-col gap-4 flex-shrink-0">
           <PuzzleControls
             status={puzzleState.status}
             message={puzzleState.message}
@@ -451,40 +474,34 @@ const App: React.FC = () => {
       </main>
 
       {/* Mobile controls */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#262421] border-t border-[#3a3835] p-4 shadow-2xl">
-        <div className="flex items-center justify-between mb-3">
-          <span className={`font-bold text-lg ${
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#262421] border-t border-[#3a3835] p-3 shadow-2xl z-50 safe-area-bottom">
+        <div className="flex items-center justify-between mb-2.5">
+          <span className={`font-bold text-base ${
             puzzleState.status === 'solved' ? 'text-[#629924]' :
             puzzleState.status === 'wrong' ? 'text-[#cc3333]' : 'text-white'
           }`}>
             {puzzleState.message}
           </span>
-          <span className="text-[#D4A024] text-sm font-bold flex items-center gap-1">
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-            </svg>
-            {puzzleState.puzzle?.rating}
-          </span>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-2">
           <button
             onClick={handleHint}
-            className="flex-1 bg-[#3a3835] hover:bg-[#4a4845] text-white py-3 px-4 rounded-xl text-sm font-medium transition-all active:scale-95"
+            className="flex-1 bg-[#3a3835] active:bg-[#4a4845] text-white py-2.5 px-3 rounded-xl text-sm font-medium transition-all touch-manipulation"
           >
             Hint
           </button>
           <button
             onClick={handleRetry}
-            className="flex-1 bg-[#3a3835] hover:bg-[#4a4845] text-white py-3 px-4 rounded-xl text-sm font-medium transition-all active:scale-95"
+            className="flex-1 bg-[#3a3835] active:bg-[#4a4845] text-white py-2.5 px-3 rounded-xl text-sm font-medium transition-all touch-manipulation"
           >
             Retry
           </button>
           <button
             onClick={handleNext}
-            className={`flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all active:scale-95 ${
+            className={`flex-1 py-2.5 px-3 rounded-xl text-sm font-bold transition-all touch-manipulation ${
               puzzleState.status === 'solved'
                 ? 'bg-gradient-to-r from-[#629924] to-[#558821] text-white shadow-lg'
-                : 'bg-[#3a3835] hover:bg-[#4a4845] text-white'
+                : 'bg-[#3a3835] active:bg-[#4a4845] text-white'
             }`}
           >
             Next

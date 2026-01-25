@@ -231,9 +231,9 @@ const Board: React.FC<BoardProps> = ({
   };
 
   return (
-    <div className="relative">
-      {/* Chess board */}
-      <div style={{ width: '560px', height: '560px' }}>
+    <div className="relative w-full max-w-[560px]">
+      {/* Chess board - Responsive container */}
+      <div className="w-full aspect-square max-w-[560px]">
         <Chessboard
           position={fen}
           onPieceDrop={handlePieceDrop}
