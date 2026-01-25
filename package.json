@@ -1,0 +1,35 @@
+{
+  "name": "blitzmate",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Professional Chess Puzzle Trainer - Master tactics with puzzles matched to your skill level",
+  "author": "Blitzmate",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "chess.js": "^1.0.0-beta.8",
+    "react": "^18.2.0",
+    "react-chessboard": "^4.7.2",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.3.6",
+    "terser": "^5.46.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.8"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

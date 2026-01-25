@@ -1,0 +1,244 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #161512;
+  color: #bababa;
+  overflow-x: hidden;
+}
+
+/* Smooth transitions for theme changes */
+.transition-theme {
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Chessground board styles */
+.cg-wrap {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.cg-wrap cg-container {
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+cg-board {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #8b4513;
+}
+
+.cg-wrap svg {
+  overflow: visible;
+}
+
+/* Custom highlight colors */
+cg-board square.last-move {
+  background-color: rgba(155, 199, 0, 0.41) !important;
+}
+
+cg-board square.selected {
+  background-color: rgba(20, 85, 30, 0.5) !important;
+}
+
+cg-board square.move-dest {
+  background: radial-gradient(rgba(20, 85, 30, 0.5) 22%, transparent 22%) !important;
+  background-size: 100% 100% !important;
+}
+
+cg-board square.move-dest.oc {
+  background: radial-gradient(transparent 0%, transparent 79%, rgba(20, 85, 30, 0.3) 80%) !important;
+  background-size: 100% 100% !important;
+}
+
+cg-board square.check {
+  background: radial-gradient(ellipse at center, rgba(255, 0, 0, 1) 0%, rgba(231, 0, 0, 1) 25%, rgba(169, 0, 0, 0) 89%, rgba(158, 0, 0, 0) 100%) !important;
+}
+
+/* Hint arrow styling */
+.cg-shapes svg line {
+  stroke: #0088cc !important;
+  stroke-width: 15 !important;
+  stroke-linecap: round !important;
+  opacity: 0.8 !important;
+}
+
+.cg-shapes svg circle {
+  fill: #0088cc !important;
+  opacity: 0.8 !important;
+}
+
+/* Piece drag ghost */
+cg-board piece.ghost {
+  opacity: 0.3;
+}
+
+/* Coordinates styling */
+.cg-wrap coords {
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.cg-wrap coords.ranks,
+.cg-wrap coords.files {
+  color: #999;
+}
+
+/* Animations */
+@keyframes pulse-success {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-pulse-success {
+  animation: pulse-success 1s ease-in-out infinite;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slideUp {
+  animation: slideUp 0.4s ease-out;
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.2s ease-out;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1917;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #404040;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #505050;
+}
+
+/* Focus styles */
+input:focus,
+button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(212, 160, 36, 0.5);
+}
+
+input:focus {
+  border-color: #D4A024 !important;
+}
+
+/* Button hover effects */
+.btn-hover {
+  transition: all 0.2s ease;
+}
+
+.btn-hover:hover {
+  transform: translateY(-1px);
+}
+
+.btn-hover:active {
+  transform: translateY(0);
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.2s ease;
+}
+
+.card-hover:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Selection color */
+::selection {
+  background-color: #D4A024;
+  color: white;
+}
+
+/* Board responsive sizing */
+@media (max-width: 768px) {
+  .cg-wrap {
+    max-width: calc(100vw - 32px) !important;
+    max-height: calc(100vw - 32px) !important;
+  }
+}
+
+/* Prevent text selection during drag */
+cg-board {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Glass morphism effect */
+.glass {
+  background: rgba(38, 36, 33, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #D4A024 0%, #f0c040 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Loading shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #262421 25%, #333 50%, #262421 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
