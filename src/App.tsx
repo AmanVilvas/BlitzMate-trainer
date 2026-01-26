@@ -307,8 +307,8 @@ const App: React.FC = () => {
 
       {/* Main content */}
       <main className="flex-1 flex flex-col lg:flex-row justify-center items-start p-2 sm:p-4 gap-3 sm:gap-5 overflow-y-auto">
-        {/* Left sidebar - Puzzle info - Desktop only */}
-        <aside className="w-[240px] hidden lg:flex flex-col gap-4 flex-shrink-0">
+        {/* Left sidebar - Puzzle info - Shows on desktop */}
+        <aside className="w-[240px] hidden xl:flex flex-col gap-4 flex-shrink-0">
           {/* Puzzle info card */}
           <div className="bg-[#262421] rounded-xl p-5 border border-[#3a3835] shadow-lg">
             <div className="flex items-center gap-2.5 mb-4">
@@ -364,7 +364,7 @@ const App: React.FC = () => {
         </aside>
 
         {/* Center - Board */}
-        <section className="flex flex-col items-center w-full max-w-[560px] lg:max-w-none flex-shrink-0">
+        <section className="flex flex-col items-center w-full max-w-[560px] flex-shrink-0 lg:flex-shrink">
           {/* Mobile puzzle info - Above board */}
           <div className="lg:hidden w-full mb-3 bg-[#262421] rounded-xl p-3 border border-[#3a3835] shadow-lg">
             <div className="flex items-center justify-between">
@@ -457,8 +457,8 @@ const App: React.FC = () => {
           </div>
         </section>
 
-        {/* Right sidebar - Controls - Desktop only */}
-        <aside className="w-[280px] hidden lg:flex flex-col gap-4 flex-shrink-0">
+        {/* Right sidebar - Controls - Shows on medium screens and up */}
+        <aside className="w-full lg:w-[320px] flex flex-col gap-4 flex-shrink-0">
           <PuzzleControls
             status={puzzleState.status}
             message={puzzleState.message}
@@ -473,8 +473,8 @@ const App: React.FC = () => {
         </aside>
       </main>
 
-      {/* Mobile controls */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#262421] border-t border-[#3a3835] p-3 shadow-2xl z-50 safe-area-bottom">
+      {/* Mobile controls - Hidden since controls are now always visible */}
+      <div className="hidden fixed bottom-0 left-0 right-0 bg-[#262421] border-t border-[#3a3835] p-3 shadow-2xl z-50 safe-area-bottom">
         <div className="flex items-center justify-between mb-2.5">
           <span className={`font-bold text-base ${
             puzzleState.status === 'solved' ? 'text-[#629924]' :
