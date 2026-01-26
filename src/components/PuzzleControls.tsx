@@ -31,9 +31,9 @@ const PuzzleControls: React.FC<PuzzleControlsProps> = ({
     switch (status) {
       case 'correct':
       case 'solved':
-        return 'text-[#629924]';
+        return 'text-green-400';
       case 'wrong':
-        return 'text-[#cc3333]';
+        return 'text-red-400';
       default:
         return 'text-white';
     }
@@ -43,11 +43,11 @@ const PuzzleControls: React.FC<PuzzleControlsProps> = ({
     switch (status) {
       case 'correct':
       case 'solved':
-        return 'bg-[#629924]/10 border-[#629924]/30';
+        return 'bg-green-500/10 border-green-500/30';
       case 'wrong':
-        return 'bg-[#cc3333]/10 border-[#cc3333]/30';
+        return 'bg-red-500/10 border-red-500/30';
       default:
-        return 'bg-[#D4A024]/10 border-[#D4A024]/30';
+        return 'bg-orange-500/10 border-orange-500/30';
     }
   };
 
@@ -81,7 +81,7 @@ const PuzzleControls: React.FC<PuzzleControlsProps> = ({
   };
 
   return (
-    <div className="bg-[#262421] rounded-xl border border-[#3a3835] overflow-hidden shadow-lg">
+    <div className="bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 overflow-hidden shadow-lg">
       {/* Status section */}
       <div className={`p-5 border-b ${getStatusBg()}`}>
         <div className="flex items-center gap-3">
@@ -90,7 +90,7 @@ const PuzzleControls: React.FC<PuzzleControlsProps> = ({
             className={`w-10 h-10 rounded-lg ${
               userColor === 'white' 
                 ? 'bg-white shadow-md' 
-                : 'bg-[#333] border border-[#555]'
+                : 'bg-black/60 border border-white/20'
             } flex items-center justify-center ${getStatusColor()}`}
           >
             {getStatusIcon()}
@@ -118,23 +118,23 @@ const PuzzleControls: React.FC<PuzzleControlsProps> = ({
       <div className="p-5">
         {/* Puzzle info */}
         {puzzleId && (
-          <div className="bg-[#1a1816] rounded-lg p-4 mb-4 border border-[#2a2825]">
+          <div className="bg-black/40 rounded-lg p-4 mb-4 border border-white/10">
             <div className="flex justify-between items-center text-sm mb-2">
               <span className="text-gray-500">Puzzle ID</span>
-              <span className="text-white font-mono text-xs bg-[#333] px-2 py-1 rounded">
+              <span className="text-white font-mono text-xs bg-white/10 px-2 py-1 rounded">
                 #{puzzleId.slice(0, 6)}
               </span>
             </div>
             {puzzleRating && (
               <div className="flex justify-between items-center text-sm mb-2">
                 <span className="text-gray-500">Rating</span>
-                <span className="text-[#D4A024] font-bold">{puzzleRating}</span>
+                <span className="text-orange-400 font-bold">{puzzleRating}</span>
               </div>
             )}
             {hintsUsed > 0 && (
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-500">Hints used</span>
-                <span className="text-[#56b4e9] font-medium">{hintsUsed}</span>
+                <span className="text-blue-400 font-medium">{hintsUsed}</span>
               </div>
             )}
           </div>
@@ -146,7 +146,7 @@ const PuzzleControls: React.FC<PuzzleControlsProps> = ({
           {status === 'solved' && (
             <button
               onClick={onNext}
-              className="w-full bg-gradient-to-r from-[#629924] to-[#558821] hover:from-[#75b226] hover:to-[#669927] text-white font-bold py-3.5 px-4 rounded-xl transition-all text-lg shadow-lg shadow-[#629924]/20 flex items-center justify-center gap-2"
+              className="w-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white font-bold py-3.5 px-4 rounded-xl transition-all text-lg shadow-lg shadow-green-600/20 flex items-center justify-center gap-2"
             >
               Next Puzzle
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -159,7 +159,7 @@ const PuzzleControls: React.FC<PuzzleControlsProps> = ({
           {status !== 'solved' && status !== 'loading' && (
             <button
               onClick={onHint}
-              className="w-full bg-[#1a1816] hover:bg-[#252320] text-[#56b4e9] font-semibold py-3 px-4 rounded-xl transition-all border border-[#2a2825] hover:border-[#3a3835] flex items-center justify-center gap-2"
+              className="w-full bg-white/5 hover:bg-white/10 text-blue-400 font-semibold py-3 px-4 rounded-xl transition-all border border-white/10 hover:border-white/20 flex items-center justify-center gap-2"
             >
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/>
@@ -173,7 +173,7 @@ const PuzzleControls: React.FC<PuzzleControlsProps> = ({
             <button
               onClick={onRetry}
               disabled={status === 'loading'}
-              className="flex-1 bg-[#3a3835] hover:bg-[#4a4845] disabled:opacity-50 text-white py-2.5 px-3 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-1.5"
+              className="flex-1 bg-white/5 hover:bg-white/10 disabled:opacity-50 text-white py-2.5 px-3 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-1.5 border border-white/10"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
@@ -183,7 +183,7 @@ const PuzzleControls: React.FC<PuzzleControlsProps> = ({
             <button
               onClick={onNext}
               disabled={status === 'loading'}
-              className="flex-1 bg-[#3a3835] hover:bg-[#4a4845] disabled:opacity-50 text-white py-2.5 px-3 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-1.5"
+              className="flex-1 bg-white/5 hover:bg-white/10 disabled:opacity-50 text-white py-2.5 px-3 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-1.5 border border-white/10"
             >
               Skip
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -195,18 +195,18 @@ const PuzzleControls: React.FC<PuzzleControlsProps> = ({
       </div>
 
       {/* Keyboard shortcuts info */}
-      <div className="px-5 py-3 bg-[#1a1816] border-t border-[#2a2825]">
+      <div className="px-5 py-3 bg-black/40 border-t border-white/10">
         <div className="flex justify-center gap-4 text-xs text-gray-500">
           <div className="flex items-center gap-1">
-            <kbd className="px-1.5 py-0.5 bg-[#333] rounded text-gray-400 font-mono">H</kbd>
+            <kbd className="px-1.5 py-0.5 bg-white/10 rounded text-gray-400 font-mono">H</kbd>
             <span>Hint</span>
           </div>
           <div className="flex items-center gap-1">
-            <kbd className="px-1.5 py-0.5 bg-[#333] rounded text-gray-400 font-mono">R</kbd>
+            <kbd className="px-1.5 py-0.5 bg-white/10 rounded text-gray-400 font-mono">R</kbd>
             <span>Retry</span>
           </div>
           <div className="flex items-center gap-1">
-            <kbd className="px-1.5 py-0.5 bg-[#333] rounded text-gray-400 font-mono">N</kbd>
+            <kbd className="px-1.5 py-0.5 bg-white/10 rounded text-gray-400 font-mono">N</kbd>
             <span>Next</span>
           </div>
         </div>

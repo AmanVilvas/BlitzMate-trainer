@@ -1,20 +1,23 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { Square } from 'chess.js';
 import Board, { BOARD_THEMES, BoardTheme } from './components/Board';
 import PuzzleControls from './components/PuzzleControls';
 import { PuzzleEngine, PuzzleState, HintInfo } from './lib/puzzleEngine';
 import { getRandomPuzzle } from './lib/lichessPuzzles';
 import LandingPage from './components/LandingPage';
+import RatingEntry from './components/RatingEntry';
 
 /**
  * Blitzmate - Professional Chess Puzzle Trainer
  */
 const PuzzleTrainer: React.FC = () => {
+  const navigate = useNavigate();
+  
   // User settings
   const [userRating, setUserRating] = useState<string>(() => 
     localStorage.getItem('blitzmate_rating') || ''
   );
-  const [isStarted, setIsStarted] = useState(false);
   
   // Board theme
   const [boardTheme, setBoardTheme] = useState<BoardTheme>(() => {
@@ -101,13 +104,19 @@ const PuzzleTrainer: React.FC = () => {
     engineRef.current.loadPuzzle(puzzle);
   }, [userRating]);
 
-  const handleStart = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!userRating) return;
-    localStorage.setItem('blitzmate_rating', userRating);
-    setIsStarted(true);
-    setTimeout(loadPuzzle, 100);
-  };
+  // Redirect to rating page if no rating is set
+  useEffect(() => {
+    if (!userRating) {
+      navigate('/rating');
+    }
+  }, [userRating, navigate]);
+
+  // Load first puzzle on mount
+  useEffect(() => {
+    if (userRating && engineRef.current) {
+      setTimeout(loadPuzzle, 100);
+    }
+  }, []); // Only run once on mount
 
   const handleMove = useCallback(
     (from: Square, to: Square, promotion?: string): boolean => {
@@ -143,8 +152,6 @@ const PuzzleTrainer: React.FC = () => {
 
   // Keyboard shortcuts
   useEffect(() => {
-    if (!isStarted) return;
-
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement) return;
 
@@ -166,7 +173,7 @@ const PuzzleTrainer: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isStarted, handleHint, handleRetry, handleNext]);
+  }, [handleHint, handleRetry, handleNext]);
 
   // Close theme selector when clicking outside
   useEffect(() => {
@@ -183,107 +190,31 @@ const PuzzleTrainer: React.FC = () => {
     return () => document.removeEventListener('click', handleClick);
   }, [showThemeSelector]);
 
-  // Welcome screen
-  if (!isStarted) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-[#161512] via-[#1a1816] to-[#161512] flex items-center justify-center text-white p-4">
-        <div className="animate-fadeIn bg-[#262421]/90 backdrop-blur-sm p-10 rounded-2xl shadow-2xl w-full max-w-lg border border-[#3a3835] text-center">
-          {/* Logo */}
-          <div className="flex flex-col items-center mb-10">
-            <div className="w-24 h-24 bg-gradient-to-br from-[#D4A024] to-[#b8891e] rounded-2xl flex items-center justify-center mb-5 shadow-lg shadow-[#D4A024]/20 transform hover:scale-105 transition-transform">
-              <svg viewBox="0 0 24 24" className="w-14 h-14 text-white fill-current drop-shadow-md">
-                <path d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5M19 19C19 19.6 18.6 20 18 20H6C5.4 20 5 19.6 5 19V18H19V19Z" />
-              </svg>
-            </div>
-            <h1 className="text-5xl font-black tracking-tight bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-              BLITZMATE
-            </h1>
-            <p className="text-gray-400 mt-3 font-medium text-lg">
-              Master Chess Tactics
-            </p>
-          </div>
-
-          {/* Rating form */}
-          <form onSubmit={handleStart} className="space-y-6">
-            <div className="text-left">
-              <label className="block text-sm font-semibold text-gray-400 mb-2 uppercase tracking-wide">
-                Your Rating
-              </label>
-              <input
-                type="number"
-                value={userRating}
-                onChange={(e) => setUserRating(e.target.value)}
-                placeholder="1500"
-                className="w-full bg-[#161512] border-2 border-[#3a3835] rounded-xl p-4 text-2xl font-bold text-white text-center focus:outline-none focus:border-[#D4A024] transition-all placeholder:text-gray-600 hover:border-[#4a4845]"
-                required
-                min="100"
-                max="3500"
-              />
-              <p className="text-xs text-gray-500 mt-2 text-center">
-                Puzzles will match your skill level
-              </p>
-            </div>
-
-            {/* Stats display */}
-            {totalPuzzles > 0 && (
-              <div className="bg-[#161512]/80 border border-[#3a3835] rounded-xl p-5 animate-slideUp">
-                <div className="text-xs text-gray-500 uppercase tracking-wide mb-3 font-semibold">Your Progress</div>
-                <div className="grid grid-cols-3 gap-4 text-center">
-                  <div className="bg-[#262421] rounded-lg p-3">
-                    <div className="text-2xl font-bold text-[#629924]">{streak}</div>
-                    <div className="text-xs text-gray-500 uppercase mt-1">Streak</div>
-                  </div>
-                  <div className="bg-[#262421] rounded-lg p-3">
-                    <div className="text-2xl font-bold text-white">{totalSolved}</div>
-                    <div className="text-xs text-gray-500 uppercase mt-1">Solved</div>
-                  </div>
-                  <div className="bg-[#262421] rounded-lg p-3">
-                    <div className="text-2xl font-bold text-[#D4A024]">{accuracy}%</div>
-                    <div className="text-xs text-gray-500 uppercase mt-1">Accuracy</div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Start button */}
-            <button
-              type="submit"
-              className="w-full bg-gradient-to-r from-[#D4A024] to-[#c4941e] hover:from-[#e6b033] hover:to-[#d4a428] text-white font-bold py-4 rounded-xl transition-all text-lg uppercase tracking-wide shadow-lg shadow-[#D4A024]/20 hover:shadow-[#D4A024]/30 hover:scale-[1.02] active:scale-[0.98]"
-            >
-              Start Training
-            </button>
-          </form>
-
-          {/* Version badge */}
-          <div className="mt-8 text-gray-600 text-xs">
-            v2.0.0
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   // Loading state
   if (!puzzleState || puzzleState.status === 'loading') {
     return (
-      <div className="min-h-screen bg-[#161512] flex flex-col items-center justify-center text-white gap-4">
-        <div className="w-16 h-16 border-4 border-[#D4A024] border-t-transparent rounded-full animate-spin" />
-        <div className="text-lg text-gray-400">Loading puzzle...</div>
+      <div className="min-h-screen bg-[#030303] flex flex-col items-center justify-center text-white gap-4 relative">
+        <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-0" style={{ backgroundImage: `url('https://grainy-gradients.vercel.app/noise.svg')` }}></div>
+        <div className="w-16 h-16 border-4 border-orange-600 border-t-transparent rounded-full animate-spin relative z-10" />
+        <div className="text-lg text-gray-400 relative z-10">Loading puzzle...</div>
       </div>
     );
   }
 
   // Main puzzle trainer UI
   return (
-    <div className="min-h-screen bg-[#161512] text-[#bababa] flex flex-col pb-safe">
+    <div className="min-h-screen bg-[#030303] text-[#bababa] flex flex-col pb-safe relative">
+      {/* Background Effects */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-0" style={{ backgroundImage: `url('https://grainy-gradients.vercel.app/noise.svg')` }}></div>
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(ellipse_at_top,#ff5d2211,transparent_50%)] pointer-events-none" />
       {/* Header */}
-      <header className="h-12 sm:h-14 bg-[#262421] border-b border-[#3a3835] flex items-center px-3 sm:px-4 justify-between shadow-md flex-shrink-0">
+      <header className="h-12 sm:h-14 bg-black/40 backdrop-blur-xl border-b border-white/10 flex items-center px-3 sm:px-4 justify-between shadow-md flex-shrink-0 relative z-10">
         <div className="flex items-center gap-3 sm:gap-6">
           <div
             className="flex items-center gap-2 cursor-pointer group"
-            onClick={() => setIsStarted(false)}
+            onClick={() => navigate('/')}
           >
-            <div className="w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-br from-[#D4A024] to-[#b8891e] rounded-lg flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-br from-orange-600 to-orange-400 rounded-lg flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
               <svg viewBox="0 0 24 24" className="w-4 h-4 sm:w-5 sm:h-5 text-white fill-current">
                 <path d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5M19 19C19 19.6 18.6 20 18 20H6C5.4 20 5 19.6 5 19V18H19V19Z" />
               </svg>
@@ -291,30 +222,30 @@ const PuzzleTrainer: React.FC = () => {
             <span className="text-white font-bold text-lg sm:text-xl tracking-tight">blitzmate</span>
           </div>
           <nav className="hidden md:flex gap-4 text-sm text-gray-400">
-            <span className="text-white font-medium px-3 py-1 bg-[#3a3835] rounded-full text-xs uppercase tracking-wide">Puzzles</span>
+            <span className="text-white font-medium px-3 py-1 bg-white/10 rounded-full text-xs uppercase tracking-wide">Puzzles</span>
           </nav>
         </div>
         <div className="flex items-center gap-2 sm:gap-5 text-xs sm:text-sm">
-          <div className="flex items-center gap-1.5 sm:gap-2 bg-[#1a1816] px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg">
+          <div className="flex items-center gap-1.5 sm:gap-2 bg-white/5 backdrop-blur-md px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-white/10">
             <span className="text-gray-500 text-[10px] sm:text-xs uppercase hidden sm:inline">Rating</span>
             <span className="text-white font-bold">{userRating}</span>
           </div>
-          <div className="flex items-center gap-1.5 sm:gap-2 bg-[#1a1816] px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg">
+          <div className="flex items-center gap-1.5 sm:gap-2 bg-white/5 backdrop-blur-md px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-white/10">
             <span className="text-gray-500 text-[10px] sm:text-xs uppercase hidden sm:inline">Streak</span>
-            <span className="text-[#629924] font-bold">{streak}</span>
+            <span className="text-green-400 font-bold">{streak}</span>
           </div>
         </div>
       </header>
 
       {/* Main content */}
-      <main className="flex-1 flex flex-col lg:flex-row justify-center items-start p-2 sm:p-4 gap-3 sm:gap-5 overflow-y-auto">
+      <main className="flex-1 flex flex-col lg:flex-row justify-center items-start p-2 sm:p-4 gap-3 sm:gap-5 overflow-y-auto relative z-10">
         {/* Left sidebar - Puzzle info - Shows on desktop */}
         <aside className="w-[240px] hidden xl:flex flex-col gap-4 flex-shrink-0">
           {/* Puzzle info card */}
-          <div className="bg-[#262421] rounded-xl p-5 border border-[#3a3835] shadow-lg">
+          <div className="bg-white/5 backdrop-blur-xl rounded-xl p-5 border border-white/10 shadow-lg">
             <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 bg-[#D4A024]/20 rounded-lg flex items-center justify-center">
-                <svg className="w-4 h-4 text-[#D4A024]" viewBox="0 0 24 24" fill="currentColor">
+              <div className="w-8 h-8 bg-orange-600/20 rounded-lg flex items-center justify-center">
+                <svg className="w-4 h-4 text-orange-400" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                 </svg>
               </div>
@@ -325,16 +256,16 @@ const PuzzleTrainer: React.FC = () => {
             <div className="space-y-2">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-500">Rating</span>
-                <span className="text-[#D4A024] font-bold text-lg">
+                <span className="text-orange-400 font-bold text-lg">
                   {puzzleState.puzzle?.rating || '?'}
                 </span>
               </div>
               {puzzleState.puzzle?.themes && (
-                <div className="pt-2 border-t border-[#3a3835]">
+                <div className="pt-2 border-t border-white/10">
                   <div className="text-xs text-gray-500 mb-2">Themes</div>
                   <div className="flex flex-wrap gap-1">
                     {puzzleState.puzzle.themes.slice(0, 3).map((theme, i) => (
-                      <span key={i} className="text-xs bg-[#3a3835] text-gray-300 px-2 py-1 rounded-full">
+                      <span key={i} className="text-xs bg-white/10 text-gray-300 px-2 py-1 rounded-full">
                         {theme}
                       </span>
                     ))}
@@ -345,12 +276,12 @@ const PuzzleTrainer: React.FC = () => {
           </div>
 
           {/* Stats card */}
-          <div className="bg-[#262421] rounded-xl p-5 border border-[#3a3835] shadow-lg">
+          <div className="bg-white/5 backdrop-blur-xl rounded-xl p-5 border border-white/10 shadow-lg">
             <div className="text-xs text-gray-500 uppercase tracking-wide mb-4 font-semibold">Session Stats</div>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-gray-400 text-sm">Streak</span>
-                <span className="text-[#629924] font-bold text-lg">{streak}</span>
+                <span className="text-green-400 font-bold text-lg">{streak}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-400 text-sm">Solved</span>
@@ -358,7 +289,7 @@ const PuzzleTrainer: React.FC = () => {
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-400 text-sm">Accuracy</span>
-                <span className="text-[#D4A024] font-bold text-lg">{accuracy}%</span>
+                <span className="text-orange-400 font-bold text-lg">{accuracy}%</span>
               </div>
             </div>
           </div>
@@ -367,11 +298,11 @@ const PuzzleTrainer: React.FC = () => {
         {/* Center - Board */}
         <section className="flex flex-col items-center w-full max-w-[560px] flex-shrink-0 lg:flex-shrink">
           {/* Mobile puzzle info - Above board */}
-          <div className="lg:hidden w-full mb-3 bg-[#262421] rounded-xl p-3 border border-[#3a3835] shadow-lg">
+          <div className="lg:hidden w-full mb-3 bg-white/5 backdrop-blur-xl rounded-xl p-3 border border-white/10 shadow-lg">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-[#D4A024]/20 rounded flex items-center justify-center">
-                  <svg className="w-3 h-3 text-[#D4A024]" viewBox="0 0 24 24" fill="currentColor">
+                <div className="w-6 h-6 bg-orange-600/20 rounded flex items-center justify-center">
+                  <svg className="w-3 h-3 text-orange-400" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                   </svg>
                 </div>
@@ -379,7 +310,7 @@ const PuzzleTrainer: React.FC = () => {
                   #{puzzleState.puzzle?.id?.slice(0, 5) || '---'}
                 </span>
               </div>
-              <span className="text-[#D4A024] font-bold text-sm flex items-center gap-1">
+              <span className="text-orange-400 font-bold text-sm flex items-center gap-1">
                 <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
                 </svg>
@@ -406,7 +337,7 @@ const PuzzleTrainer: React.FC = () => {
           <div className="relative mt-3 sm:mt-4" data-theme-selector>
             <button
               onClick={() => setShowThemeSelector(!showThemeSelector)}
-              className="flex items-center gap-2 bg-[#262421] hover:bg-[#333] px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm text-gray-300 transition-all border border-[#3a3835] hover:border-[#4a4845] shadow-md"
+              className="flex items-center gap-2 bg-white/5 backdrop-blur-md hover:bg-white/10 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm text-gray-300 transition-all border border-white/10 hover:border-white/20 shadow-md"
             >
               <svg className="w-3 h-3 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
@@ -421,7 +352,7 @@ const PuzzleTrainer: React.FC = () => {
             
             {/* Theme dropdown */}
             {showThemeSelector && (
-              <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-[#262421] border border-[#3a3835] rounded-xl shadow-2xl p-3 sm:p-4 z-20 animate-scaleIn">
+              <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-black/90 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl p-3 sm:p-4 z-20 animate-scaleIn">
                 <div className="text-xs text-gray-500 mb-2 sm:mb-3 uppercase font-bold text-center tracking-wide">Select Theme</div>
                 <div className="flex gap-2 sm:gap-3">
                   {BOARD_THEMES.map((theme) => (
@@ -430,8 +361,8 @@ const PuzzleTrainer: React.FC = () => {
                       onClick={() => handleThemeChange(theme)}
                       className={`flex flex-col items-center p-2 sm:p-2.5 rounded-xl transition-all ${
                         boardTheme.id === theme.id 
-                          ? 'bg-[#3a3835] ring-2 ring-[#D4A024] shadow-lg' 
-                          : 'hover:bg-[#333]'
+                          ? 'bg-white/10 ring-2 ring-orange-500 shadow-lg' 
+                          : 'hover:bg-white/5'
                       }`}
                     >
                       <div className="w-12 h-12 sm:w-14 sm:h-14 grid grid-cols-4 rounded-lg overflow-hidden mb-1 sm:mb-2 border border-gray-700 shadow-md">
@@ -514,25 +445,34 @@ const PuzzleTrainer: React.FC = () => {
 };
 
 /**
- * Main App Component with Landing Page
+ * Landing Page Wrapper with Navigation
+ */
+const LandingPageWrapper: React.FC = () => {
+  const navigate = useNavigate();
+  return <LandingPage onStartTraining={() => navigate('/rating')} />;
+};
+
+/**
+ * Main App Component with Routing
  */
 const App: React.FC = () => {
-  const [showLanding, setShowLanding] = useState<boolean>(() => {
-    // Check if user has visited before
-    const hasVisited = localStorage.getItem('blitzmate_visited');
-    return !hasVisited; // Show landing if never visited
-  });
-
-  const handleStartTraining = () => {
-    localStorage.setItem('blitzmate_visited', 'true');
-    setShowLanding(false);
-  };
-
-  if (showLanding) {
-    return <LandingPage onStartTraining={handleStartTraining} />;
-  }
-
-  return <PuzzleTrainer />;
+  return (
+    <Router>
+      <Routes>
+        {/* Landing Page - Home Route */}
+        <Route path="/" element={<LandingPageWrapper />} />
+        
+        {/* Rating Entry Page */}
+        <Route path="/rating" element={<RatingEntry />} />
+        
+        {/* Puzzle Trainer Page */}
+        <Route path="/puzzles" element={<PuzzleTrainer />} />
+        
+        {/* Redirect any unknown routes to home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
+  );
 };
 
 export default App;
