@@ -4,11 +4,12 @@ import Board, { BOARD_THEMES, BoardTheme } from './components/Board';
 import PuzzleControls from './components/PuzzleControls';
 import { PuzzleEngine, PuzzleState, HintInfo } from './lib/puzzleEngine';
 import { getRandomPuzzle } from './lib/lichessPuzzles';
+import LandingPage from './components/LandingPage';
 
 /**
  * Blitzmate - Professional Chess Puzzle Trainer
  */
-const App: React.FC = () => {
+const PuzzleTrainer: React.FC = () => {
   // User settings
   const [userRating, setUserRating] = useState<string>(() => 
     localStorage.getItem('blitzmate_rating') || ''
@@ -510,6 +511,28 @@ const App: React.FC = () => {
       </div>
     </div>
   );
+};
+
+/**
+ * Main App Component with Landing Page
+ */
+const App: React.FC = () => {
+  const [showLanding, setShowLanding] = useState<boolean>(() => {
+    // Check if user has visited before
+    const hasVisited = localStorage.getItem('blitzmate_visited');
+    return !hasVisited; // Show landing if never visited
+  });
+
+  const handleStartTraining = () => {
+    localStorage.setItem('blitzmate_visited', 'true');
+    setShowLanding(false);
+  };
+
+  if (showLanding) {
+    return <LandingPage onStartTraining={handleStartTraining} />;
+  }
+
+  return <PuzzleTrainer />;
 };
 
 export default App;
