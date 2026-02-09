@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Swords, 
-  Brain, 
-  Trophy, 
-  Target, 
-  Lightbulb, 
-  TrendingUp, 
-  ChevronDown, 
-  ChevronRight, 
-  Menu, 
-  X, 
-  Github, 
-  Twitter,
+import {
+  Swords,
+  Brain,
+  Trophy,
+  Target,
+  Lightbulb,
+  TrendingUp,
+  ChevronDown,
+  ChevronRight,
+  Menu,
+  X,
+  Github,
   LayoutGrid,
-  Zap
+  Zap,
+  Linkedin,
+  Mail
 } from 'lucide-react';
 
 interface LandingPageProps {
@@ -62,7 +63,7 @@ const Navbar: React.FC<{ onStartTraining: () => void }> = ({ onStartTraining }) 
             ))}
           </div>
 
-          <button 
+          <button
             onClick={onStartTraining}
             className="hidden md:block bg-white text-black px-6 py-2 rounded-full text-sm font-bold hover:bg-gray-200 transition-colors shadow-[0_0_20px_rgba(255,255,255,0.2)]"
           >
@@ -77,7 +78,7 @@ const Navbar: React.FC<{ onStartTraining: () => void }> = ({ onStartTraining }) 
 
       <AnimatePresence>
         {isOpen && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
@@ -88,7 +89,7 @@ const Navbar: React.FC<{ onStartTraining: () => void }> = ({ onStartTraining }) 
                 {link}
               </a>
             ))}
-            <button 
+            <button
               onClick={() => {
                 setIsOpen(false);
                 onStartTraining();
@@ -108,9 +109,9 @@ const Hero: React.FC<{ onStartTraining: () => void }> = ({ onStartTraining }) =>
   <section className="relative pt-48 pb-20 overflow-hidden">
     {/* Background Glows */}
     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[500px] bg-orange-600/20 blur-[120px] -z-10 rounded-full" />
-    
+
     <div className="max-w-7xl mx-auto px-4 text-center">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-8"
@@ -119,7 +120,7 @@ const Hero: React.FC<{ onStartTraining: () => void }> = ({ onStartTraining }) =>
         <span className="text-xs font-semibold uppercase tracking-widest text-gray-400">Blitzmate fuels improvement</span>
       </motion.div>
 
-      <motion.h1 
+      <motion.h1
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
@@ -128,7 +129,7 @@ const Hero: React.FC<{ onStartTraining: () => void }> = ({ onStartTraining }) =>
         Train Chess Tactics Like a Pro With <span className="bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent">Blitzmate</span>
       </motion.h1>
 
-      <motion.p 
+      <motion.p
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
@@ -137,13 +138,13 @@ const Hero: React.FC<{ onStartTraining: () => void }> = ({ onStartTraining }) =>
         Pick your rating, solve puzzles from real games, and improve your tactics with instant feedback, hints, and streak tracking.
       </motion.p>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
         className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-24"
       >
-        <button 
+        <button
           onClick={onStartTraining}
           className="px-8 py-4 bg-orange-600 hover:bg-orange-500 text-white rounded-full font-bold text-lg transition-all shadow-[0_0_30px_rgba(234,88,12,0.4)] flex items-center gap-2 group"
         >
@@ -155,7 +156,7 @@ const Hero: React.FC<{ onStartTraining: () => void }> = ({ onStartTraining }) =>
       </motion.div>
 
       {/* The Glow Slab */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.8, rotateX: 45 }}
         animate={{ opacity: 1, scale: 1, rotateX: 25 }}
         transition={{ duration: 1, ease: "easeOut" }}
@@ -164,11 +165,11 @@ const Hero: React.FC<{ onStartTraining: () => void }> = ({ onStartTraining }) =>
       >
         <div className="absolute inset-0 bg-gradient-to-b from-orange-500 to-red-800 rounded-[40px] blur-[2px] opacity-80 shadow-[0_40px_100px_rgba(234,88,12,0.6)]" />
         <div className="absolute inset-x-4 top-4 bottom-[-20px] bg-black/60 backdrop-blur-3xl rounded-[40px] border border-white/10 overflow-hidden flex items-center justify-center">
-            <div className="flex gap-4 opacity-20">
-                {[...Array(8)].map((_, i) => (
-                    <div key={i} className="w-12 h-12 border border-white/20" />
-                ))}
-            </div>
+          <div className="flex gap-4 opacity-20">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="w-12 h-12 border border-white/20" />
+            ))}
+          </div>
         </div>
       </motion.div>
     </div>
@@ -216,7 +217,7 @@ const Features = () => {
       <div className="max-w-7xl mx-auto px-4">
         <div className="grid md:grid-cols-3 gap-8">
           {features.map((f, i) => (
-            <motion.div 
+            <motion.div
               whileHover={{ y: -10 }}
               key={i}
               className="p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-orange-500/50 transition-all group relative overflow-hidden"
@@ -259,20 +260,20 @@ const HowItWorks = () => {
             ))}
           </div>
         </div>
-        
+
         <div className="relative">
           <div className="absolute inset-0 bg-orange-500/20 blur-[100px] rounded-full" />
           <div className="relative bg-black/40 border border-white/10 p-4 rounded-3xl backdrop-blur-xl aspect-square flex flex-col items-center justify-center overflow-hidden">
             <div className="grid grid-cols-4 gap-2 w-full h-full opacity-40">
-                {[...Array(16)].map((_, i) => (
-                    <div key={i} className={`rounded ${ (i + Math.floor(i/4)) % 2 === 0 ? 'bg-white/10' : 'bg-transparent'}`} />
-                ))}
+              {[...Array(16)].map((_, i) => (
+                <div key={i} className={`rounded ${(i + Math.floor(i / 4)) % 2 === 0 ? 'bg-white/10' : 'bg-transparent'}`} />
+              ))}
             </div>
             <div className="absolute inset-0 flex items-center justify-center">
-                <div className="p-8 bg-white/5 rounded-2xl border border-white/20 backdrop-blur-md">
-                    <Brain className="w-16 h-16 text-orange-500 animate-bounce" />
-                    <p className="mt-4 text-white font-bold text-center">Finding Puzzle...</p>
-                </div>
+              <div className="p-8 bg-white/5 rounded-2xl border border-white/20 backdrop-blur-md">
+                <Brain className="w-16 h-16 text-orange-500 animate-bounce" />
+                <p className="mt-4 text-white font-bold text-center">Finding Puzzle...</p>
+              </div>
             </div>
           </div>
         </div>
@@ -295,14 +296,14 @@ const Testimonials = () => {
         <div className="grid md:grid-cols-3 gap-8">
           {reviews.map((r, i) => (
             <div key={i} className="p-8 rounded-3xl bg-white/5 border border-white/10 relative">
-               <div className="flex items-center gap-4 mb-6">
-                 <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-gray-700 to-gray-500" />
-                 <div>
-                   <h5 className="text-white font-bold">{r.name}</h5>
-                   <span className="text-orange-500 text-xs font-bold uppercase">{r.rating}</span>
-                 </div>
-               </div>
-               <p className="text-gray-300 italic">"{r.text}"</p>
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-gray-700 to-gray-500" />
+                <div>
+                  <h5 className="text-white font-bold">{r.name}</h5>
+                  <span className="text-orange-500 text-xs font-bold uppercase">{r.rating}</span>
+                </div>
+              </div>
+              <p className="text-gray-300 italic">"{r.text}"</p>
             </div>
           ))}
         </div>
@@ -328,7 +329,7 @@ const FAQ = () => {
         <div className="space-y-4">
           {questions.map((item, i) => (
             <div key={i} className="border-b border-white/10 overflow-hidden">
-              <button 
+              <button
                 onClick={() => setActive(active === i ? -1 : i)}
                 className="w-full py-6 flex items-center justify-between text-left group"
               >
@@ -337,7 +338,7 @@ const FAQ = () => {
               </button>
               <AnimatePresence>
                 {active === i && (
-                  <motion.div 
+                  <motion.div
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
@@ -362,7 +363,7 @@ const FinalCTA: React.FC<{ onStartTraining: () => void }> = ({ onStartTraining }
         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,#ea580c33,transparent_70%)]" />
         <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 relative z-10">Ready to sharpen your tactics?</h2>
         <p className="text-gray-400 text-lg mb-12 max-w-xl mx-auto relative z-10">Join thousands of players who are already dominating the board with Blitzmate.</p>
-        <button 
+        <button
           onClick={onStartTraining}
           className="relative z-10 px-10 py-5 bg-white text-black rounded-full font-black text-xl hover:scale-105 transition-transform shadow-[0_0_50px_rgba(255,255,255,0.3)]"
         >
@@ -374,22 +375,31 @@ const FinalCTA: React.FC<{ onStartTraining: () => void }> = ({ onStartTraining }
 );
 
 const Footer = () => (
-  <footer className="py-20 border-t border-white/5 bg-black">
-    <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-8">
+  <footer className="py-12 border-t border-white/5 bg-black">
+    <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
       <div className="flex items-center gap-2">
         <div className="w-6 h-6 bg-orange-600 rounded-md flex items-center justify-center">
           <Swords className="text-white w-4 h-4" />
         </div>
         <span className="text-xl font-bold tracking-tight text-white">Blitzmate</span>
       </div>
-      
-      <p className="text-gray-500 text-sm">© 2026 Blitzmate. Built for chess improvement.</p>
-      
+
+      <div className="flex flex-col items-center gap-2">
+        <p className="text-gray-500 text-sm">© 2026 Blitzmate. Built for chess improvement.</p>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-gray-600 font-medium uppercase tracking-wider">Contact Me:</span>
+          <a href="mailto:amanvilvas04@gmail.com" className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-orange-400 transition-colors">
+            <Mail className="w-3.5 h-3.5" />
+            <span>amanvilvas04@gmail.com</span>
+          </a>
+        </div>
+      </div>
+
       <div className="flex items-center gap-6">
-        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-          <Twitter className="w-5 h-5 text-gray-500 hover:text-white cursor-pointer transition-colors" />
+        <a href="https://www.linkedin.com/in/amanvilvas04/" target="_blank" rel="noopener noreferrer" title="LinkedIn">
+          <Linkedin className="w-5 h-5 text-gray-500 hover:text-white cursor-pointer transition-colors" />
         </a>
-        <a href="https://github.com/AmanVilvas/BlitzMate-trainer" target="_blank" rel="noopener noreferrer">
+        <a href="https://github.com/AmanVilvas" target="_blank" rel="noopener noreferrer" title="GitHub">
           <Github className="w-5 h-5 text-gray-500 hover:text-white cursor-pointer transition-colors" />
         </a>
       </div>
@@ -404,14 +414,14 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartTraining }) => {
     <div className="min-h-screen bg-[#030303] text-white selection:bg-orange-500/30 font-sans">
       {/* Noise Texture Overlay */}
       <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-[100]" style={{ backgroundImage: `url('https://grainy-gradients.vercel.app/noise.svg')` }}></div>
-      
+
       {/* Global Background Elements */}
       <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(ellipse_at_top,#ff5d2211,transparent_50%)] pointer-events-none" />
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full h-[60vh] bg-[radial-gradient(ellipse_at_bottom,#ff5d2211,transparent_50%)] pointer-events-none" />
 
       <PromoBar />
       <Navbar onStartTraining={onStartTraining} />
-      
+
       <main>
         <Hero onStartTraining={onStartTraining} />
         <SocialProof />
