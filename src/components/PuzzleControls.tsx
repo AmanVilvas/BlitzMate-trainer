@@ -13,9 +13,6 @@ interface PuzzleControlsProps {
   onNext: () => void;
 }
 
-/**
- * Puzzle control buttons and status display
- */
 const PuzzleControls: React.FC<PuzzleControlsProps> = ({
   status,
   message,
@@ -27,189 +24,145 @@ const PuzzleControls: React.FC<PuzzleControlsProps> = ({
   onRetry,
   onNext,
 }) => {
-  const getStatusColor = () => {
-    switch (status) {
-      case 'correct':
-      case 'solved':
-        return 'text-green-400';
-      case 'wrong':
-        return 'text-red-400';
-      default:
-        return 'text-white';
-    }
-  };
+  const isSolved  = status === 'solved';
+  const isWrong   = status === 'wrong';
+  const isCorrect = status === 'correct';
+  const isPlaying = status === 'playing';
 
-  const getStatusBg = () => {
-    switch (status) {
-      case 'correct':
-      case 'solved':
-        return 'bg-green-500/10 border-green-500/30';
-      case 'wrong':
-        return 'bg-red-500/10 border-red-500/30';
-      default:
-        return 'bg-orange-500/10 border-orange-500/30';
-    }
-  };
+  const statusColor = isSolved || isCorrect
+    ? 'text-[#8fb87a]'
+    : isWrong
+    ? 'text-[#d4756a]'
+    : 'text-white';
 
-  const getStatusIcon = () => {
-    switch (status) {
-      case 'correct':
-        return (
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
-          </svg>
-        );
-      case 'solved':
-        return (
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-          </svg>
-        );
-      case 'wrong':
-        return (
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
-          </svg>
-        );
-      default:
-        return (
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M19 22H5v-2h14v2M17.16 8.26A4.96 4.96 0 0 0 12 4C9.24 4 7 6.24 7 9c0 2.85 2.92 7.21 5 9.88 2.11-2.69 5-7 5-9.88 0-.9-.24-1.73-.84-2.74z"/>
-          </svg>
-        );
-    }
-  };
+  const statusBg = isSolved || isCorrect
+    ? 'bg-[#8fb87a]/10 border-[#8fb87a]/25'
+    : isWrong
+    ? 'bg-[#d4756a]/10 border-[#d4756a]/25'
+    : 'bg-[#c9a96e]/10 border-[#c9a96e]/25';
+
+  const statusMsg = isSolved
+    ? '✓ Puzzle Solved!'
+    : isWrong
+    ? '✗ Incorrect Move'
+    : isCorrect
+    ? '✓ Correct! Keep going…'
+    : isPlaying
+    ? `Find the best move for ${userColor}`
+    : message;
 
   return (
-    <div className="bg-white/5 backdrop-blur-xl rounded-xl border border-white/10 overflow-hidden shadow-lg">
-      {/* Status section */}
-      <div className={`p-5 border-b ${getStatusBg()}`}>
-        <div className="flex items-center gap-3">
-          {/* Player color indicator */}
-          <div
-            className={`w-10 h-10 rounded-lg ${
-              userColor === 'white' 
-                ? 'bg-white shadow-md' 
-                : 'bg-black/60 border border-white/20'
-            } flex items-center justify-center ${getStatusColor()}`}
-          >
-            {getStatusIcon()}
-          </div>
+    <div className="flex flex-col gap-4 h-full">
 
-          {/* Status message */}
-          <div className="flex-1">
-            <div className={`font-bold text-lg ${getStatusColor()}`}>
-              {message || 'Your turn'}
-            </div>
-            <div className="text-sm text-gray-400">
-              {status === 'playing' && (
-                <>Find the best move for {userColor}</>
-              )}
-              {status === 'correct' && <>Keep going...</>}
-              {status === 'solved' && <>Puzzle completed!</>}
-              {status === 'wrong' && <>Try again!</>}
-              {status === 'loading' && <>Loading puzzle...</>}
-            </div>
-          </div>
+      {/* Status banner */}
+      <div className={`rounded-lg p-4 border ${statusBg}`}>
+        <div className="flex items-center gap-3">
+          {/* Color indicator dot */}
+          <div
+            className={`w-4 h-4 rounded-sm border flex-shrink-0 ${
+              userColor === 'white'
+                ? 'bg-[#f0d9b5] border-[#b58863]'
+                : 'bg-[#b58863] border-[#8b6343]'
+            }`}
+          />
+          <span className={`font-semibold text-sm ${statusColor}`}>
+            {statusMsg}
+          </span>
         </div>
       </div>
 
-      {/* Content section */}
-      <div className="p-5">
-        {/* Puzzle info */}
-        {puzzleId && (
-          <div className="bg-black/40 rounded-lg p-4 mb-4 border border-white/10">
-            <div className="flex justify-between items-center text-sm mb-2">
-              <span className="text-gray-500">Puzzle ID</span>
-              <span className="text-white font-mono text-xs bg-white/10 px-2 py-1 rounded">
-                #{puzzleId.slice(0, 6)}
-              </span>
-            </div>
-            {puzzleRating && (
-              <div className="flex justify-between items-center text-sm mb-2">
-                <span className="text-gray-500">Rating</span>
-                <span className="text-orange-400 font-bold">{puzzleRating}</span>
-              </div>
-            )}
-            {hintsUsed > 0 && (
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-500">Hints used</span>
-                <span className="text-blue-400 font-medium">{hintsUsed}</span>
-              </div>
-            )}
+      {/* Puzzle info */}
+      {puzzleId && (
+        <div className="bg-[#252220] rounded-lg border border-[#3a3530] divide-y divide-[#3a3530]">
+          <div className="flex justify-between items-center px-4 py-3">
+            <span className="text-xs text-[#7a7068] font-medium">Puzzle ID</span>
+            <span className="text-xs font-mono text-[#a0998e]">#{puzzleId.slice(0, 6)}</span>
           </div>
+          {puzzleRating && (
+            <div className="flex justify-between items-center px-4 py-3">
+              <span className="text-xs text-[#7a7068] font-medium">Rating</span>
+              <span className="text-sm font-bold text-[#c9a96e]">{puzzleRating}</span>
+            </div>
+          )}
+          <div className="flex justify-between items-center px-4 py-3">
+            <span className="text-xs text-[#7a7068] font-medium">Playing</span>
+            <div className="flex items-center gap-1.5">
+              <div className={`w-3 h-3 rounded-sm ${userColor === 'white' ? 'bg-[#f0d9b5]' : 'bg-[#b58863]'}`} />
+              <span className="text-xs text-[#a0998e] capitalize">{userColor}</span>
+            </div>
+          </div>
+          {hintsUsed > 0 && (
+            <div className="flex justify-between items-center px-4 py-3">
+              <span className="text-xs text-[#7a7068] font-medium">Hints used</span>
+              <span className="text-xs text-[#a0998e]">{hintsUsed}</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Actions */}
+      <div className="flex flex-col gap-2 mt-auto">
+
+        {/* Next — primary when solved */}
+        {isSolved && (
+          <button
+            onClick={onNext}
+            id="next-puzzle-btn"
+            className="w-full bg-[#8fb87a] hover:bg-[#9dc888] text-white font-bold py-3 rounded-lg text-sm transition-colors flex items-center justify-center gap-2"
+          >
+            Next Puzzle
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+            </svg>
+          </button>
         )}
 
-        {/* Action buttons */}
-        <div className="space-y-3">
-          {/* Next button (prominent when solved) */}
-          {status === 'solved' && (
-            <button
-              onClick={onNext}
-              className="w-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white font-bold py-3.5 px-4 rounded-xl transition-all text-lg shadow-lg shadow-green-600/20 flex items-center justify-center gap-2"
-            >
-              Next Puzzle
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-              </svg>
-            </button>
-          )}
+        {/* Hint */}
+        {!isSolved && status !== 'loading' && (
+          <button
+            onClick={onHint}
+            id="hint-btn"
+            className="w-full bg-[#252220] hover:bg-[#2e2b27] text-[#a0998e] hover:text-white font-semibold py-3 rounded-lg text-sm transition-colors border border-[#3a3530] hover:border-[#c9a96e]/40 flex items-center justify-center gap-2"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/>
+            </svg>
+            Get a Hint
+          </button>
+        )}
 
-          {/* Hint button */}
-          {status !== 'solved' && status !== 'loading' && (
-            <button
-              onClick={onHint}
-              className="w-full bg-white/5 hover:bg-white/10 text-blue-400 font-semibold py-3 px-4 rounded-xl transition-all border border-white/10 hover:border-white/20 flex items-center justify-center gap-2"
-            >
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/>
-              </svg>
-              Get a Hint
-            </button>
-          )}
-
-          {/* Retry and Next buttons */}
-          <div className="flex gap-3">
-            <button
-              onClick={onRetry}
-              disabled={status === 'loading'}
-              className="flex-1 bg-white/5 hover:bg-white/10 disabled:opacity-50 text-white py-2.5 px-3 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-1.5 border border-white/10"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-              </svg>
-              Retry
-            </button>
-            <button
-              onClick={onNext}
-              disabled={status === 'loading'}
-              className="flex-1 bg-white/5 hover:bg-white/10 disabled:opacity-50 text-white py-2.5 px-3 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-1.5 border border-white/10"
-            >
-              Skip
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7"/>
-              </svg>
-            </button>
-          </div>
+        {/* Retry + Skip row */}
+        <div className="flex gap-2">
+          <button
+            onClick={onRetry}
+            disabled={status === 'loading'}
+            id="retry-btn"
+            className="flex-1 bg-[#252220] hover:bg-[#2e2b27] disabled:opacity-40 text-[#a0998e] hover:text-white py-2.5 rounded-lg text-sm font-medium transition-colors border border-[#3a3530] flex items-center justify-center gap-1.5"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+            Retry
+          </button>
+          <button
+            onClick={onNext}
+            disabled={status === 'loading'}
+            id="skip-btn"
+            className="flex-1 bg-[#252220] hover:bg-[#2e2b27] disabled:opacity-40 text-[#a0998e] hover:text-white py-2.5 rounded-lg text-sm font-medium transition-colors border border-[#3a3530] flex items-center justify-center gap-1.5"
+          >
+            Skip
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7"/>
+            </svg>
+          </button>
         </div>
       </div>
 
-      {/* Keyboard shortcuts info */}
-      <div className="px-5 py-3 bg-black/40 border-t border-white/10">
-        <div className="flex justify-center gap-4 text-xs text-gray-500">
-          <div className="flex items-center gap-1">
-            <kbd className="px-1.5 py-0.5 bg-white/10 rounded text-gray-400 font-mono">H</kbd>
-            <span>Hint</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <kbd className="px-1.5 py-0.5 bg-white/10 rounded text-gray-400 font-mono">R</kbd>
-            <span>Retry</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <kbd className="px-1.5 py-0.5 bg-white/10 rounded text-gray-400 font-mono">N</kbd>
-            <span>Next</span>
-          </div>
-        </div>
+      {/* Keyboard shortcuts */}
+      <div className="flex justify-center gap-5 text-xs text-[#5a5550] pt-1">
+        <span><kbd className="bg-[#252220] border border-[#3a3530] rounded px-1.5 py-0.5 text-[#7a7068] font-mono">H</kbd> Hint</span>
+        <span><kbd className="bg-[#252220] border border-[#3a3530] rounded px-1.5 py-0.5 text-[#7a7068] font-mono">R</kbd> Retry</span>
+        <span><kbd className="bg-[#252220] border border-[#3a3530] rounded px-1.5 py-0.5 text-[#7a7068] font-mono">N</kbd> Next</span>
       </div>
     </div>
   );
