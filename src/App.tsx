@@ -41,6 +41,7 @@ const PuzzleTrainer: React.FC = () => {
   const [puzzleState, setPuzzleState] = useState<PuzzleState | null>(null);
   const [hint, setHint] = useState<HintInfo | null>(null);
   const [prevStatus, setPrevStatus] = useState<string>('');
+  const attemptedPuzzleIdsRef = useRef<Set<string>>(new Set());
   
   // Engine reference
   const engineRef = useRef<PuzzleEngine | null>(null);
@@ -78,10 +79,16 @@ const PuzzleTrainer: React.FC = () => {
   useEffect(() => {
     if (!puzzleState) return;
 
+    const hasAttempted = ['correct', 'wrong', 'solved'].includes(puzzleState.status);
+    const puzzleId = puzzleState.puzzle?.id;
+    if (hasAttempted && puzzleId && !attemptedPuzzleIdsRef.current.has(puzzleId)) {
+      attemptedPuzzleIdsRef.current.add(puzzleId);
+      setTotalPuzzles((total) => total + 1);
+    }
+
     if (puzzleState.status === 'solved' && prevStatus !== 'solved') {
       setStreak((s) => s + 1);
       setTotalSolved((s) => s + 1);
-      setTotalPuzzles((p) => p + 1);
     } else if (puzzleState.status === 'wrong' && prevStatus !== 'wrong') {
       setStreak(0);
     }
@@ -113,10 +120,10 @@ const PuzzleTrainer: React.FC = () => {
 
   // Load first puzzle on mount
   useEffect(() => {
-    if (userRating && engineRef.current) {
-      setTimeout(loadPuzzle, 100);
-    }
-  }, []); // Only run once on mount
+    if (!userRating || !engineRef.current) return;
+    const initialPuzzleTimer = window.setTimeout(loadPuzzle, 100);
+    return () => window.clearTimeout(initialPuzzleTimer);
+  }, [loadPuzzle, userRating]);
 
   const handleMove = useCallback(
     (from: Square, to: Square, promotion?: string): boolean => {

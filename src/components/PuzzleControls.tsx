@@ -118,7 +118,7 @@ const PuzzleControls: React.FC<PuzzleControlsProps> = ({
         )}
 
         {/* Hint */}
-        {!isSolved && status !== 'loading' && (
+        {isPlaying && (
           <button
             onClick={onHint}
             id="hint-btn"

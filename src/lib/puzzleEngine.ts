@@ -42,8 +42,9 @@ export interface HintInfo {
  */
 export class PuzzleEngine {
   private state: PuzzleState;
-  private initialFen: string = '';
   private onStateChange: (state: PuzzleState) => void;
+  private opponentMoveTimer: ReturnType<typeof setTimeout> | null = null;
+  private wrongMoveTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(onStateChange: (state: PuzzleState) => void) {
     this.onStateChange = onStateChange;
@@ -69,13 +70,53 @@ export class PuzzleEngine {
     this.onStateChange(this.state);
   }
 
+  private clearPendingTimers() {
+    if (this.opponentMoveTimer) clearTimeout(this.opponentMoveTimer);
+    if (this.wrongMoveTimer) clearTimeout(this.wrongMoveTimer);
+    this.opponentMoveTimer = null;
+    this.wrongMoveTimer = null;
+  }
+
   /**
    * Load a new puzzle
    * The puzzle.moves array contains UCI moves starting with the opponent's "setup" move
    */
   loadPuzzle(puzzle: Puzzle) {
-    const chess = new Chess(puzzle.fen);
-    this.initialFen = puzzle.fen;
+    this.clearPendingTimers();
+
+    let chess: Chess;
+    try {
+      chess = new Chess(puzzle.fen);
+      if (puzzle.moves.length < 2) {
+        throw new Error('Puzzle solution must include a setup move and at least one answer move.');
+      }
+
+      // Reject a broken line before showing it to the player.
+      for (const uci of puzzle.moves) {
+        const move = chess.move({
+          from: uci.substring(0, 2) as Square,
+          to: uci.substring(2, 4) as Square,
+          promotion: uci.length > 4 ? uci.substring(4) : undefined,
+        });
+        if (!move) throw new Error(`Illegal solution move: ${uci}`);
+      }
+
+      chess = new Chess(puzzle.fen);
+    } catch (error) {
+      console.error(`Failed to load puzzle ${puzzle.id}:`, error);
+      this.updateState({
+        puzzle,
+        chess: new Chess(),
+        status: 'failed',
+        moveIndex: 0,
+        userColor: 'white',
+        lastMove: null,
+        message: 'This puzzle could not be loaded. Skip to another puzzle.',
+        hintsUsed: 0,
+        isOpponentTurn: false,
+      });
+      return;
+    }
 
     // The first move in the solution is the opponent's move that sets up the puzzle
     // We need to apply it first
@@ -84,11 +125,7 @@ export class PuzzleEngine {
     const to = setupMove.substring(2, 4) as Square;
     const promotion = setupMove.length > 4 ? setupMove.substring(4) : undefined;
 
-    try {
-      chess.move({ from, to, promotion });
-    } catch (e) {
-      console.error('Failed to apply setup move:', setupMove, e);
-    }
+    chess.move({ from, to, promotion });
 
     // After setup move, it's the user's turn
     // User plays the color that moves AFTER the setup move
@@ -159,6 +196,11 @@ export class PuzzleEngine {
       return false;
     }
 
+    if (this.wrongMoveTimer) {
+      clearTimeout(this.wrongMoveTimer);
+      this.wrongMoveTimer = null;
+    }
+
     // For pawn promotion, default to queen if not specified
     const promoMove = this.needsPromotion(from, to);
     const finalPromotion = promoMove ? (promotion || 'q') : undefined;
@@ -196,7 +238,10 @@ export class PuzzleEngine {
         });
 
         // Auto-play opponent's response after a short delay
-        setTimeout(() => this.playOpponentMove(), 400);
+          this.opponentMoveTimer = setTimeout(() => {
+            this.opponentMoveTimer = null;
+            this.playOpponentMove();
+          }, 400);
         return true;
       } catch (e) {
         console.error('Move failed:', e);
@@ -216,7 +261,8 @@ export class PuzzleEngine {
           });
 
           // Reset message after delay
-          setTimeout(() => {
+          this.wrongMoveTimer = setTimeout(() => {
+            this.wrongMoveTimer = null;
             if (this.state.status === 'wrong') {
               this.updateState({
                 status: 'playing',
@@ -292,9 +338,9 @@ export class PuzzleEngine {
    * Returns the exact next correct move from the solution
    */
   getHint(): HintInfo | null {
-    const { chess, puzzle, moveIndex, status } = this.state;
+    const { chess, puzzle, moveIndex, status, isOpponentTurn } = this.state;
 
-    if (!puzzle || status === 'solved' || status === 'failed') return null;
+    if (!puzzle || status !== 'playing' || isOpponentTurn) return null;
     if (moveIndex >= puzzle.moves.length) return null;
 
     const hintMove = puzzle.moves[moveIndex];
